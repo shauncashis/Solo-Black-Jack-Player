@@ -1,0 +1,89 @@
+#include <iostream>
+#include <vector>
+#include <ctime>
+using namespace std;
+
+int drawCard() {
+    int card = rand() % 13 + 1; // 1–13
+    if (card > 10) {
+        return 10; // J, Q, K
+    }
+    return card;
+}
+
+int calculateTotal(vector<int> &hand) {
+    int total = 0;
+    for (int card : hand) {
+        total += card;
+    }
+    return total;
+}
+
+void showHand(vector<int> &hand) {
+    for (int card : hand) {
+        cout << card << " ";
+    }
+}
+
+int main() {
+    srand(time(0));
+
+    vector<int> playerHand;
+    vector<int> dealerHand;
+
+    // Initial deal
+    playerHand.push_back(drawCard());
+    playerHand.push_back(drawCard());
+    dealerHand.push_back(drawCard());
+    dealerHand.push_back(drawCard());
+
+    cout << "\n--- Blackjack Simulation ---\n";
+    cout << "Player Cards: ";
+    showHand(playerHand);
+    cout << "\nDealer Showing: " << dealerHand[0] << endl;
+
+    // PLAYER STRATEGY: hit until 16+
+    while (calculateTotal(playerHand) < 16) {
+        playerHand.push_back(drawCard());
+    }
+
+    int playerTotal = calculateTotal(playerHand);
+
+    cout << "\nPlayer Final Hand: ";
+    showHand(playerHand);
+    cout << "  Total = " << playerTotal << endl;
+
+    // Check bust
+    if (playerTotal > 21) {
+        cout << "Player Busts! Dealer Wins.\n";
+        return 0;
+    }
+
+    // DEALER TURN: standard rule -> hit until 17+
+    while (calculateTotal(dealerHand) < 17) {
+        dealerHand.push_back(drawCard());
+    }
+
+    int dealerTotal = calculateTotal(dealerHand);
+
+    cout << "\nDealer Final Hand: ";
+    showHand(dealerHand);
+    cout << "  Total = " << dealerTotal << endl;
+
+    if (dealerTotal > 21) {
+        cout << "Dealer Busts! Player Wins.\n";
+        return 0;
+    }
+
+    // Compare results
+    cout << "\n--- RESULT ---\n";
+    if (playerTotal > dealerTotal) {
+        cout << "Player Wins!\n";
+    } else if (dealerTotal > playerTotal) {
+        cout << "Dealer Wins!\n";
+    } else {
+        cout << "It's a Tie!\n";
+    }
+
+    return 0;
+}
